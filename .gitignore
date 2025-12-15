@@ -1,0 +1,4 @@
+# Служебные файлы IntelliJ IDEA
+.idea/
+*.iml
+out/
