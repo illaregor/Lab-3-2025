@@ -1,4 +1,7 @@
-# Служебные файлы IntelliJ IDEA
+# IntelliJ IDEA
 .idea/
 *.iml
+
+# Компиляция
 out/
+*.class

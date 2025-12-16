@@ -7,6 +7,19 @@ import functions.InappropriateFunctionPointException;
 
 public class Main {
 
+    // Вывод всех точек функции в консоль
+    private static void printPoints(TabulatedFunction func) {
+        System.out.println("Точки функции:");
+        for (int i = 0; i < func.getPointsCount(); i++) {
+            System.out.printf(
+                    "  [%d] x = %.3f, y = %.3f%n",
+                    i,
+                    func.getPointX(i),
+                    func.getPointY(i)
+            );
+        }
+    }
+
     // Проверка исключений
     public static void testExceptions(TabulatedFunction func, String name) {
         System.out.println("\n--- Тестирование исключений для " + name + " ---");
@@ -51,9 +64,13 @@ public class Main {
         System.out.println("Тестирование исключений завершено.");
     }
 
-    // Проверка добавления, удаления и замены  нулевой точки
+    //Проверка добавления, удаления и замены нулевой точки
     public static void testZeroIndexOperations(TabulatedFunction func, String name) {
         System.out.println("\n--- Проверка операций с нулевой точкой: " + name + " ---");
+
+        // Исходное состояние
+        System.out.println("Исходные точки:");
+        printPoints(func);
 
         // 1. Замена нулевой точки
         try {
@@ -62,19 +79,22 @@ public class Main {
                     new FunctionPoint(oldPoint.getX(), oldPoint.getY() + 100);
 
             func.setPoint(0, newPoint);
-            System.out.println("setPoint(0) OK: y = " + func.getPointY(0));
+
+            System.out.println("\nПосле setPoint(0):");
+            printPoints(func);
         } catch (Exception e) {
             System.out.println("setPoint(0) ERROR: " + e.getMessage());
         }
 
         // 2. Удаление нулевой точки
         try {
-            int before = func.getPointsCount();
-            func.deletePoint(0);
-            int after = func.getPointsCount();
+            System.out.println("\nПеред deletePoint(0):");
+            printPoints(func);
 
-            System.out.println("deletePoint(0) OK: " + before + " -> " + after);
-            System.out.println("Новая первая точка: x = " + func.getPointX(0));
+            func.deletePoint(0);
+
+            System.out.println("После deletePoint(0):");
+            printPoints(func);
         } catch (Exception e) {
             System.out.println("deletePoint(0) ERROR: " + e.getMessage());
         }
@@ -84,8 +104,13 @@ public class Main {
             double newX = func.getLeftDomainBorder() - 1;
             FunctionPoint newPoint = new FunctionPoint(newX, 999);
 
+            System.out.println("\nПеред addPoint(new first):");
+            printPoints(func);
+
             func.addPoint(newPoint);
-            System.out.println("addPoint(new first) OK: x = " + func.getPointX(0));
+
+            System.out.println("После addPoint(new first):");
+            printPoints(func);
         } catch (Exception e) {
             System.out.println("addPoint(new first) ERROR: " + e.getMessage());
         }
@@ -95,7 +120,6 @@ public class Main {
 
         double[] values = {10, 20, 30, 40, 50};
 
-        // Проверка обычной работы
         TabulatedFunction arrayFunc =
                 new ArrayTabulatedFunction(0, 4, values);
         TabulatedFunction linkedFunc =
@@ -105,15 +129,13 @@ public class Main {
         System.out.println("f(1.5) = " + arrayFunc.getFunctionValue(1.5));
 
         System.out.println("\n--- Проверка работы LinkedListTabulatedFunction ---");
-        System.out.println("Количество точек: " + linkedFunc.getPointsCount());
-        System.out.println("Правая граница: " + linkedFunc.getRightDomainBorder());
         System.out.println("f(2.5) = " + linkedFunc.getFunctionValue(2.5));
 
-        //Проверка исключений
+        // Проверка исключений
         testExceptions(arrayFunc, "ArrayTabulatedFunction");
         testExceptions(linkedFunc, "LinkedListTabulatedFunction");
 
-        //Проверка нулевой точки
+        // Проверка операций с нулевой точкой
         testZeroIndexOperations(
                 new ArrayTabulatedFunction(0, 4, new double[]{10, 20, 30, 40}),
                 "ArrayTabulatedFunction"
